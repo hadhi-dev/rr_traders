@@ -19,7 +19,7 @@ jobs:
         server: 145.79.210.214
         username: u973938263.rrtraders.online
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: public_html/
+        server-dir: ./
         protocol: ftps
         port: 21
         security: loose
