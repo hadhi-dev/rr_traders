@@ -13,6 +13,11 @@ jobs:
     - name: 🚚 Get latest code
       uses: actions/checkout@v3
 
+    - name: ⚡ Auto-inject Cache Buster Version
+      run: |
+        sed -i 's|assets/css/style.css[^"]*|assets/css/style.css?v=${{ github.sha }}|g' index.html
+        sed -i 's|assets/js/main.js[^"]*|assets/js/main.js?v=${{ github.sha }}|g' index.html
+
     - name: 📂 Sync files to Hostinger FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
