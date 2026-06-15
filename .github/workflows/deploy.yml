@@ -21,10 +21,9 @@ jobs:
     - name: 📂 Sync files to Hostinger FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: 145.79.210.214
+        server: ftp://145.79.210.214
         username: u973938263.rrtraders.online
         password: ${{ secrets.FTP_PASSWORD }}
         server-dir: ./
-        protocol: ftps
+        protocol: ftp
         port: 21
-        security: loose
