@@ -18,12 +18,7 @@ jobs:
         sed -i 's|assets/css/style.css[^"]*|assets/css/style.css?v=${{ github.sha }}|g' index.html
         sed -i 's|assets/js/main.js[^"]*|assets/js/main.js?v=${{ github.sha }}|g' index.html
 
-    - name: 📂 Sync files to Hostinger FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ftp://145.79.210.214
-        username: u973938263.rrtraders.online
-        password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: ./
-        protocol: ftp
-        port: 21
+    - name: 📂 Sync files to Hostinger FTP (via lftp)
+      run: |
+        sudo apt-get update && sudo apt-get install -y lftp
+        lftp -c "set ftp:ssl-allow false; set ftp:passive-mode true; open -u u973938263.rrtraders.online,\"${{ secrets.FTP_PASSWORD }}\" -p 21 145.79.210.214; mirror -R --delete --parallel=10 --exclude-glob .git* --exclude-glob .github* --exclude-glob README.md ./ ./"
