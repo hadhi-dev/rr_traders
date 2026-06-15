@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollAnimations();
   initProductFilters();
   initQuoteModal();
+  initStatsCounter();
 });
 
 /* 1. Navbar Interactive Effects */
@@ -199,6 +200,64 @@ function initQuoteModal() {
       // Open in WhatsApp and close modal
       window.open(whatsappURL, '_blank');
       closeModal();
+    });
+  }
+}
+
+/* 5. Statistics Count Up Animation */
+function initStatsCounter() {
+  const countElements = document.querySelectorAll('.count-up');
+  if (countElements.length === 0) return;
+
+  const animateCount = (element) => {
+    const target = parseInt(element.getAttribute('data-target'), 10);
+    const duration = 2000; // Duration of animation in ms
+    let startTime = null;
+
+    const step = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = timestamp - startTime;
+      const rate = Math.min(progress / duration, 1);
+      
+      // Easing out quadratic function (starts fast, slows down)
+      const easeOutQuad = rate * (2 - rate);
+      const currentValue = Math.floor(easeOutQuad * target);
+      
+      // Formatting thousands with commas (e.g. 5,000)
+      if (currentValue >= 1000) {
+        element.textContent = currentValue.toLocaleString('en-IN');
+      } else {
+        element.textContent = currentValue;
+      }
+
+      if (progress < duration) {
+        window.requestAnimationFrame(step);
+      } else {
+        element.textContent = target >= 1000 ? target.toLocaleString('en-IN') : target;
+      }
+    };
+
+    window.requestAnimationFrame(step);
+  };
+
+  // Trigger when stats section enters viewport
+  const statsSection = document.getElementById('statsSection');
+  if (statsSection && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          countElements.forEach(el => animateCount(el));
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    observer.observe(statsSection);
+  } else {
+    // Fallback
+    countElements.forEach(el => {
+      const target = el.getAttribute('data-target');
+      el.textContent = parseInt(target, 10).toLocaleString('en-IN');
     });
   }
 }
